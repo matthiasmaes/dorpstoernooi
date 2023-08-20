@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '/backend/backend.dart';
+import '/backend/schema/structs/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
@@ -11,191 +13,146 @@ class FFAppState extends ChangeNotifier {
 
   FFAppState._internal();
 
-  Future initializePersistedState() async {}
+  Future initializePersistedState() async {
+    prefs = await SharedPreferences.getInstance();
+    _safeInit(() {
+      _products = prefs
+              .getStringList('ff_products')
+              ?.map((x) {
+                try {
+                  return ProductStruct.fromSerializableMap(jsonDecode(x));
+                } catch (e) {
+                  print("Can't decode persisted data type. Error: $e.");
+                  return null;
+                }
+              })
+              .withoutNulls
+              .toList() ??
+          _products;
+    });
+  }
 
   void update(VoidCallback callback) {
     callback();
     notifyListeners();
   }
 
-  int _nrOfPlatWater = 0;
-  int get nrOfPlatWater => _nrOfPlatWater;
-  set nrOfPlatWater(int _value) {
-    _nrOfPlatWater = _value;
+  late SharedPreferences prefs;
+
+  List<String> _order = [];
+  List<String> get order => _order;
+  set order(List<String> _value) {
+    _order = _value;
   }
 
-  int _nrOfBruisWater = 0;
-  int get nrOfBruisWater => _nrOfBruisWater;
-  set nrOfBruisWater(int _value) {
-    _nrOfBruisWater = _value;
+  void addToOrder(String _value) {
+    _order.add(_value);
   }
 
-  int _nrOfLimonade = 0;
-  int get nrOfLimonade => _nrOfLimonade;
-  set nrOfLimonade(int _value) {
-    _nrOfLimonade = _value;
+  void removeFromOrder(String _value) {
+    _order.remove(_value);
   }
 
-  int _nrOfCocaCola = 0;
-  int get nrOfCocaCola => _nrOfCocaCola;
-  set nrOfCocaCola(int _value) {
-    _nrOfCocaCola = _value;
+  void removeAtIndexFromOrder(int _index) {
+    _order.removeAt(_index);
   }
 
-  int _nrOfCocaColaZero = 0;
-  int get nrOfCocaColaZero => _nrOfCocaColaZero;
-  set nrOfCocaColaZero(int _value) {
-    _nrOfCocaColaZero = _value;
+  void updateOrderAtIndex(
+    int _index,
+    String Function(String) updateFn,
+  ) {
+    _order[_index] = updateFn(_order[_index]);
   }
 
-  int _nrOfAquariusRood = 0;
-  int get nrOfAquariusRood => _nrOfAquariusRood;
-  set nrOfAquariusRood(int _value) {
-    _nrOfAquariusRood = _value;
+  List<ProductStruct> _products = [];
+  List<ProductStruct> get products => _products;
+  set products(List<ProductStruct> _value) {
+    _products = _value;
+    prefs.setStringList(
+        'ff_products', _value.map((x) => x.serialize()).toList());
   }
 
-  int _nrOfAquariusGeel = 0;
-  int get nrOfAquariusGeel => _nrOfAquariusGeel;
-  set nrOfAquariusGeel(int _value) {
-    _nrOfAquariusGeel = _value;
+  void addToProducts(ProductStruct _value) {
+    _products.add(_value);
+    prefs.setStringList(
+        'ff_products', _products.map((x) => x.serialize()).toList());
   }
 
-  int _nrOfAquariusWit = 0;
-  int get nrOfAquariusWit => _nrOfAquariusWit;
-  set nrOfAquariusWit(int _value) {
-    _nrOfAquariusWit = _value;
+  void removeFromProducts(ProductStruct _value) {
+    _products.remove(_value);
+    prefs.setStringList(
+        'ff_products', _products.map((x) => x.serialize()).toList());
   }
 
-  int _nrOfJupiler = 0;
-  int get nrOfJupiler => _nrOfJupiler;
-  set nrOfJupiler(int _value) {
-    _nrOfJupiler = _value;
+  void removeAtIndexFromProducts(int _index) {
+    _products.removeAt(_index);
+    prefs.setStringList(
+        'ff_products', _products.map((x) => x.serialize()).toList());
   }
 
-  int _nrOfJupiler00 = 0;
-  int get nrOfJupiler00 => _nrOfJupiler00;
-  set nrOfJupiler00(int _value) {
-    _nrOfJupiler00 = _value;
+  void updateProductsAtIndex(
+    int _index,
+    ProductStruct Function(ProductStruct) updateFn,
+  ) {
+    _products[_index] = updateFn(_products[_index]);
+    prefs.setStringList(
+        'ff_products', _products.map((x) => x.serialize()).toList());
   }
 
-  int _nrOfKriek = 0;
-  int get nrOfKriek => _nrOfKriek;
-  set nrOfKriek(int _value) {
-    _nrOfKriek = _value;
+  int _total = 0;
+  int get total => _total;
+  set total(int _value) {
+    _total = _value;
   }
 
-  int _nrOfMalheur = 0;
-  int get nrOfMalheur => _nrOfMalheur;
-  set nrOfMalheur(int _value) {
-    _nrOfMalheur = _value;
+  List<OrderItemStruct> _orderItems = [];
+  List<OrderItemStruct> get orderItems => _orderItems;
+  set orderItems(List<OrderItemStruct> _value) {
+    _orderItems = _value;
   }
 
-  int _nrOfDuvel = 0;
-  int get nrOfDuvel => _nrOfDuvel;
-  set nrOfDuvel(int _value) {
-    _nrOfDuvel = _value;
+  void addToOrderItems(OrderItemStruct _value) {
+    _orderItems.add(_value);
   }
 
-  int _nrOfKarmeliet = 0;
-  int get nrOfKarmeliet => _nrOfKarmeliet;
-  set nrOfKarmeliet(int _value) {
-    _nrOfKarmeliet = _value;
+  void removeFromOrderItems(OrderItemStruct _value) {
+    _orderItems.remove(_value);
   }
 
-  int _nrOfChimay = 0;
-  int get nrOfChimay => _nrOfChimay;
-  set nrOfChimay(int _value) {
-    _nrOfChimay = _value;
+  void removeAtIndexFromOrderItems(int _index) {
+    _orderItems.removeAt(_index);
   }
 
-  int _nrOfCornet = 0;
-  int get nrOfCornet => _nrOfCornet;
-  set nrOfCornet(int _value) {
-    _nrOfCornet = _value;
+  void updateOrderItemsAtIndex(
+    int _index,
+    OrderItemStruct Function(OrderItemStruct) updateFn,
+  ) {
+    _orderItems[_index] = updateFn(_orderItems[_index]);
   }
 
-  int _nrOfGlasCava = 0;
-  int get nrOfGlasCava => _nrOfGlasCava;
-  set nrOfGlasCava(int _value) {
-    _nrOfGlasCava = _value;
+  List<OrderItemStruct> _joinedOrder = [];
+  List<OrderItemStruct> get joinedOrder => _joinedOrder;
+  set joinedOrder(List<OrderItemStruct> _value) {
+    _joinedOrder = _value;
   }
 
-  int _nrOfGlasWijnWit = 0;
-  int get nrOfGlasWijnWit => _nrOfGlasWijnWit;
-  set nrOfGlasWijnWit(int _value) {
-    _nrOfGlasWijnWit = _value;
+  void addToJoinedOrder(OrderItemStruct _value) {
+    _joinedOrder.add(_value);
   }
 
-  int _nrOfGlasWijnRood = 0;
-  int get nrOfGlasWijnRood => _nrOfGlasWijnRood;
-  set nrOfGlasWijnRood(int _value) {
-    _nrOfGlasWijnRood = _value;
+  void removeFromJoinedOrder(OrderItemStruct _value) {
+    _joinedOrder.remove(_value);
   }
 
-  int _nrOfGlasWijnRose = 0;
-  int get nrOfGlasWijnRose => _nrOfGlasWijnRose;
-  set nrOfGlasWijnRose(int _value) {
-    _nrOfGlasWijnRose = _value;
+  void removeAtIndexFromJoinedOrder(int _index) {
+    _joinedOrder.removeAt(_index);
   }
 
-  int _nrOfFlesWijnWit = 0;
-  int get nrOfFlesWijnWit => _nrOfFlesWijnWit;
-  set nrOfFlesWijnWit(int _value) {
-    _nrOfFlesWijnWit = _value;
-  }
-
-  int _nrOfFlesWijnRood = 0;
-  int get nrOfFlesWijnRood => _nrOfFlesWijnRood;
-  set nrOfFlesWijnRood(int _value) {
-    _nrOfFlesWijnRood = _value;
-  }
-
-  int _nrOfFlesWijnRose = 0;
-  int get nrOfFlesWijnRose => _nrOfFlesWijnRose;
-  set nrOfFlesWijnRose(int _value) {
-    _nrOfFlesWijnRose = _value;
-  }
-
-  int _nrOfFlesCava = 0;
-  int get nrOfFlesCava => _nrOfFlesCava;
-  set nrOfFlesCava(int _value) {
-    _nrOfFlesCava = _value;
-  }
-
-  int _nrOfKoffie = 0;
-  int get nrOfKoffie => _nrOfKoffie;
-  set nrOfKoffie(int _value) {
-    _nrOfKoffie = _value;
-  }
-
-  int _nrOfThee = 0;
-  int get nrOfThee => _nrOfThee;
-  set nrOfThee(int _value) {
-    _nrOfThee = _value;
-  }
-
-  int _nrOfSoep = 0;
-  int get nrOfSoep => _nrOfSoep;
-  set nrOfSoep(int _value) {
-    _nrOfSoep = _value;
-  }
-
-  int _nrOfChips = 0;
-  int get nrOfChips => _nrOfChips;
-  set nrOfChips(int _value) {
-    _nrOfChips = _value;
-  }
-
-  int _nrOfIceTea = 0;
-  int get nrOfIceTea => _nrOfIceTea;
-  set nrOfIceTea(int _value) {
-    _nrOfIceTea = _value;
-  }
-
-  int _nrOfBonnen = 0;
-  int get nrOfBonnen => _nrOfBonnen;
-  set nrOfBonnen(int _value) {
-    _nrOfBonnen = _value;
+  void updateJoinedOrderAtIndex(
+    int _index,
+    OrderItemStruct Function(OrderItemStruct) updateFn,
+  ) {
+    _joinedOrder[_index] = updateFn(_joinedOrder[_index]);
   }
 }
 
